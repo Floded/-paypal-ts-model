@@ -8,4 +8,5 @@ export const envs = {
   PAYPAL_API_SECRET_KEY: env.get("PAYPAL_API_SECRET_KEY").required().asString(),
   PAYPAL_CLIENT_ID: env.get("PAYPAL_CLIENT_ID").required().asString(),
   PAYPAL_API: env.get("PAYPAL_API").required().asString(),
+  PAYPAL_WEBHOOK_ID: env.get("PAYPAL_WEBHOOK_ID").required().asString(),
 };

@@ -9,9 +9,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.cancelController = exports.createOrderController = exports.paymentController = void 0;
-const paypal_capture_handler_1 = require("../handlers/paypal-capture.handler");
+exports.cancelController = exports.notificationsWebhook = exports.paymentController = void 0;
 const paypal_request_handler_1 = require("../handlers/paypal-request.handler");
+const webhook_controller_1 = require("./webhook.controller");
 const paymentController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { price, currency } = req.body;
     try {
@@ -23,17 +23,19 @@ const paymentController = (req, res) => __awaiter(void 0, void 0, void 0, functi
     }
 });
 exports.paymentController = paymentController;
-const createOrderController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { token } = req.query;
+const notificationsWebhook = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const response = yield (0, paypal_capture_handler_1.captureOrderHandler)(token);
-        res.send("payed");
+        const { body } = req;
+        const { headers } = req;
+        const response = yield (0, webhook_controller_1.webhookResponse)(body, headers);
+        res.status(200).json({ msj: response });
     }
     catch (error) {
-        res.status(404).json({ error });
+        console.log("Error en el webhook", error);
+        res.status(500).json(error);
     }
 });
-exports.createOrderController = createOrderController;
+exports.notificationsWebhook = notificationsWebhook;
 const cancelController = (req, res) => {
     res.send("cancel order");
 };

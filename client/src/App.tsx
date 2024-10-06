@@ -3,9 +3,9 @@ import { Product } from './components/product';
 function App() {
 
   return (
-    <>
-     <Product/>
-    </>
+    <section className='min-h-screen w-full flex flex-col items-center justify-center bg-slate-900'>
+      <Product/>
+    </section>
   )
 }
 

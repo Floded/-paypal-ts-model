@@ -1,5 +1,6 @@
 import axios from "axios";
 import { envs } from "../config/plugins/env.plugins";
+import { getAccesToken } from "../helpers/getAccessToken";
 
 export const paypalRequest = async (price: string, currency: string) => {
   const order = {
@@ -16,29 +17,17 @@ export const paypalRequest = async (price: string, currency: string) => {
       brand_name: "Mi tienda",
       landing_page: "NO_PREFERENCE",
       user_action: "PAY_NOW",
-      return_url: `http://localhost:${envs.PORT}/capture-order`,
-      cancel_url: `http://localhost:${envs.PORT}/cancel-order`,
     },
   };
-  console.log(order.purchase_units[0]);
+  // console.log(order.purchase_units[0]);
 
-  const params = new URLSearchParams();
-  params.append("grant_type", "client_credentials");
-
-  const {
-    data: { access_token },
-  } = await axios.post(`${envs.PAYPAL_API}/v1/oauth2/token`, params, {
-    auth: {
-      username: envs.PAYPAL_CLIENT_ID,
-      password: envs.PAYPAL_API_SECRET_KEY,
-    },
-  });
+  const accessToken = await getAccesToken();
 
   const {
     data: { links },
   } = await axios.post(`${envs.PAYPAL_API}/v2/checkout/orders`, order, {
     headers: {
-      Authorization: `Bearer ${access_token}`,
+      Authorization: `Bearer ${accessToken}`,
     },
   });
 

@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import { captureOrderHandler } from "../handlers/paypal-capture.handler";
 import { paypalRequest } from "../handlers/paypal-request.handler";
+import { webhookResponse } from "./webhook.controller";
 
 export const paymentController = async (req: Request, res: Response) => {
   const { price, currency } = req.body;
@@ -13,14 +13,16 @@ export const paymentController = async (req: Request, res: Response) => {
   }
 };
 
-export const createOrderController = async (req: Request, res: Response) => {
-  const { token } = req.query;
-
+export const notificationsWebhook = async (req: Request, res: Response) => {
   try {
-    const response = await captureOrderHandler(token);
-    res.send("payed");
+    const { body } = req;
+    const { headers } = req;
+    const response = await webhookResponse(body, headers);
+
+    res.status(200).json({ msj: response });
   } catch (error) {
-    res.status(404).json({ error });
+    console.log("Error en el webhook", error);
+    res.status(500).json(error);
   }
 };
 
